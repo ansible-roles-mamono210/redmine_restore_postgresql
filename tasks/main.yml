@@ -1,0 +1,82 @@
+---
+- name: Restart postgresql.service
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+    enabled: yes
+
+- name: Add privilege escalation to user 'postgres'
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers.d/postgres
+    owner: root
+    group: root
+    mode: 0440
+    line: "%{{ ansible_user_id }} ALL=(postgres) NOPASSWD: ALL"
+    state: present
+    create: yes
+    validate: "visudo -cf %s"
+  environment:
+    PATH:
+      "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ ansible_env.PATH }} "
+
+- name: Delete database
+  become_user: postgres
+  become_method: ansible.builtin.sudo
+  community.general.postgresql_db:
+    name: '{{ redmine_db_name }}'
+    state: absent
+
+- name: Create database
+  become_user: postgres
+  become_method: ansible.builtin.sudo
+  community.general.postgresql_db:
+    name: '{{ redmine_db_name }}'
+    encoding: UTF-8
+    lc_collate: ja_JP.UTF-8
+    lc_ctype: ja_JP.UTF-8
+    template: template0
+
+- name: Restore database
+  become_user: postgres
+  become_method: ansible.builtin.sudo
+  ansible.builtin.shell:
+    cmd:
+      "psql -h localhost
+       -U {{ redmine_db_user }}
+       {{ redmine_db_name }}
+       < {{ redmine_backup_data_dir }}/{{ redmine_pg_dump_file }}"
+  environment:
+    PGPASSWORD: '{{ redmine_db_password }}'
+
+- name: Update gem packages
+  ansible.builtin.command: bundle update
+  args:
+    chdir: '{{ redmine_dir }}'
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+
+- name: Create secret token
+  ansible.builtin.command: bundle exec rake generate_secret_token
+  args:
+    chdir: '{{ redmine_dir }}'
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: Execute database migration
+  ansible.builtin.command: bin/rake db:migrate
+  args:
+    chdir: '{{ redmine_dir }}'
+  environment:
+    RAILS_ENV: production
+
+- name: Restart httpd
+  ansible.builtin.service:
+    name: httpd
+    state: restarted
+    enabled: yes
+
+- name: Remove privilege escalation from user 'postgres'
+  ansible.builtin.file:
+    path: /etc/sudoers.d/postgres
+    state: absent

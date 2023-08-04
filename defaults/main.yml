@@ -1,0 +1,21 @@
+---
+# Dumped database file
+redmine_pg_dump_file: redmine.psql
+
+# Backup data directory
+redmine_backup_data_dir: /tmp/redmine-backup
+
+# Redmine directory
+redmine_dir: /var/lib/redmine
+
+# Host running the database
+redmine_db_host: localhost
+
+# Redmine database name
+redmine_db_name: redmine
+
+# The password to establish the PostgreSQL session
+redmine_db_password: password
+
+# The user name to establish the PostgreSQL session
+redmine_db_user: redmine
