@@ -3,4 +3,3 @@ parseable: true
 
 warn_list:
   - no-changed-when
-  - partial-become[task]

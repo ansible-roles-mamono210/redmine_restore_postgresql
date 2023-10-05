@@ -20,6 +20,7 @@
       "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ ansible_env.PATH }} "
 
 - name: Delete database
+  become: true
   become_user: postgres
   become_method: ansible.builtin.sudo
   community.general.postgresql_db:
@@ -27,6 +28,7 @@
     state: absent
 
 - name: Create database
+  become: true
   become_user: postgres
   become_method: ansible.builtin.sudo
   community.general.postgresql_db:
@@ -37,6 +39,7 @@
     template: template0
 
 - name: Restore database
+  become: true
   become_user: postgres
   become_method: ansible.builtin.sudo
   ansible.builtin.shell:
