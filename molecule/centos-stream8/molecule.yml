@@ -23,7 +23,7 @@ platforms:
         to_port: 0
         cidr_ip: '0.0.0.0/0'
     ssh_port: 22
-    ssh_user: centos
+    ssh_user: ${ANSIBLE_USER}
     tag_name: ${TAG_NAME}
     tag_created_by: ${CREATED_BY}
     volume_size: 20
@@ -34,7 +34,8 @@ provisioner:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
   connection_options:
-    ansible_user: centos
+    ansible_user: ${ANSIBLE_USER}
+    redmine_postgresql_service_name: 'postgresql'
     remote_directory: '/tmp/redmine-backup'
     remote_file_name: 'redmine.psql'
     s3_bucket: 'mamono210'

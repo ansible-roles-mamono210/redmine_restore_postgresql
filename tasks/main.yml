@@ -1,7 +1,7 @@
 ---
 - name: Restart postgresql.service
   ansible.builtin.service:
-    name: postgresql
+    name: '{{ redmine_postgresql_service_name }}'
     state: restarted
     enabled: yes
 
