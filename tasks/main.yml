@@ -51,13 +51,6 @@
   environment:
     PGPASSWORD: '{{ redmine_db_password }}'
 
-- name: Update gem packages
-  ansible.builtin.command: bundle update
-  args:
-    chdir: '{{ redmine_dir }}'
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-
 - name: Create secret token
   ansible.builtin.command: bundle exec rake generate_secret_token
   args:
