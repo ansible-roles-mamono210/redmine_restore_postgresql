@@ -18,7 +18,7 @@ redmine_db_password: password
 redmine_db_user: redmine
 
 # Dumped database file
-redmine_pg_dump_file: redmine.psql
+redmine_pg_dump_file: redmine.sql
 
 # PostgreSQL service name
 redmine_postgresql_service_name: postgresql-14

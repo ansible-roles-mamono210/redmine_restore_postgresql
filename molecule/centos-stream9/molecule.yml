@@ -36,9 +36,9 @@ provisioner:
   connection_options:
     ansible_user: ${ANSIBLE_USER}
     remote_directory: '/tmp/redmine-backup'
-    remote_file_name: 'redmine.psql'
+    remote_file_name: 'redmine.sql'
     s3_bucket: 'mamono210'
-    s3_object_name: 'circleci-gce/redmine/stop/redmine.psql'
+    s3_object_name: 'circleci-gce/redmine/stop/redmine.sql'
   log: true
 verifier:
   name: ansible
